@@ -1,0 +1,521 @@
+{
+  "problem_type": "Supervised Multiclass Classification",
+  "dataset": {
+    "total_records": 2000,
+    "train_records": 1600,
+    "test_records": 400,
+    "features": [
+      "wall_density",
+      "dead_end_ratio",
+      "branching_ratio",
+      "straight_corridor_ratio",
+      "turn_corridor_ratio"
+    ],
+    "target": "difficulty",
+    "classes": [
+      0,
+      1,
+      2
+    ]
+  },
+  "environment_versions": {
+    "python": "3.13.5",
+    "pandas": "2.3.2",
+    "numpy": "2.3.3",
+    "scikit_learn": "1.8.0",
+    "matplotlib": "3.10.6",
+    "joblib": "1.5.3"
+  },
+  "knn_hyperparameter_investigation": {
+    "evaluated_k": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "selected_k": 7,
+    "k_cv_results": {
+      "3": {
+        "mean_accuracy": 0.403125,
+        "std_accuracy": 0.027027185388049563,
+        "mean_f1_weighted": 0.3982264173185753,
+        "std_f1_weighted": 0.023529691560639703
+      },
+      "5": {
+        "mean_accuracy": 0.40249999999999997,
+        "std_accuracy": 0.03231920868461973,
+        "mean_f1_weighted": 0.3977320161522223,
+        "std_f1_weighted": 0.03158750594452816
+      },
+      "7": {
+        "mean_accuracy": 0.40499999999999997,
+        "std_accuracy": 0.03257203555198847,
+        "mean_f1_weighted": 0.40349622792950884,
+        "std_f1_weighted": 0.03160908129032157
+      },
+      "9": {
+        "mean_accuracy": 0.39,
+        "std_accuracy": 0.024638004180533787,
+        "mean_f1_weighted": 0.3859930100676176,
+        "std_f1_weighted": 0.022370954138732742
+      }
+    }
+  },
+  "cross_validation_5fold_train": {
+    "Decision Tree": {
+      "fold_accuracies": [
+        0.4,
+        0.353125,
+        0.365625,
+        0.4125,
+        0.40625
+      ],
+      "mean_cv_accuracy": 0.3875,
+      "std_cv_accuracy": 0.023634588001486292,
+      "mean_cv_precision": 0.38790800493373206,
+      "mean_cv_recall": 0.3875,
+      "mean_cv_f1": 0.3811332607621485,
+      "std_cv_f1": 0.020453196743652702
+    },
+    "K-Nearest Neighbors": {
+      "fold_accuracies": [
+        0.365625,
+        0.384375,
+        0.403125,
+        0.409375,
+        0.4625
+      ],
+      "mean_cv_accuracy": 0.40499999999999997,
+      "std_cv_accuracy": 0.03257203555198847,
+      "mean_cv_precision": 0.4069422359208542,
+      "mean_cv_recall": 0.40499999999999997,
+      "mean_cv_f1": 0.40349622792950884,
+      "std_cv_f1": 0.03160908129032157
+    },
+    "Logistic Regression": {
+      "fold_accuracies": [
+        0.446875,
+        0.38125,
+        0.478125,
+        0.434375,
+        0.48125
+      ],
+      "mean_cv_accuracy": 0.44437499999999996,
+      "std_cv_accuracy": 0.03630383932864403,
+      "mean_cv_precision": 0.43346964165107754,
+      "mean_cv_recall": 0.44437499999999996,
+      "mean_cv_f1": 0.4231177812740577,
+      "std_cv_f1": 0.03816132531259182
+    }
+  },
+  "test_set_evaluation": {
+    "Decision Tree": {
+      "accuracy": 0.365,
+      "weighted_precision": 0.3613364467622492,
+      "weighted_recall": 0.365,
+      "weighted_f1": 0.3593653826108013,
+      "macro_precision": 0.3611021412784523,
+      "macro_recall": 0.36559220216622773,
+      "macro_f1": 0.3595913429799227,
+      "per_class": {
+        "Easy (0)": {
+          "precision": 0.3924050632911392,
+          "recall": 0.45255474452554745,
+          "f1_score": 0.42033898305084744,
+          "support": 137
+        },
+        "Medium (1)": {
+          "precision": 0.3541666666666667,
+          "recall": 0.4015748031496063,
+          "f1_score": 0.3763837638376384,
+          "support": 127
+        },
+        "Hard (2)": {
+          "precision": 0.336734693877551,
+          "recall": 0.2426470588235294,
+          "f1_score": 0.28205128205128205,
+          "support": 136
+        }
+      },
+      "confusion_matrix": [
+        [
+          62,
+          41,
+          34
+        ],
+        [
+          45,
+          51,
+          31
+        ],
+        [
+          51,
+          52,
+          33
+        ]
+      ]
+    },
+    "K-Nearest Neighbors": {
+      "accuracy": 0.3675,
+      "weighted_precision": 0.36998425311809113,
+      "weighted_recall": 0.3675,
+      "weighted_f1": 0.3677091519992973,
+      "macro_precision": 0.36910969284889944,
+      "macro_recall": 0.3678747031889369,
+      "macro_f1": 0.36743769411866717,
+      "per_class": {
+        "Easy (0)": {
+          "precision": 0.3969465648854962,
+          "recall": 0.3795620437956204,
+          "f1_score": 0.3880597014925373,
+          "support": 137
+        },
+        "Medium (1)": {
+          "precision": 0.3333333333333333,
+          "recall": 0.3858267716535433,
+          "f1_score": 0.35766423357664234,
+          "support": 127
+        },
+        "Hard (2)": {
+          "precision": 0.3770491803278688,
+          "recall": 0.3382352941176471,
+          "f1_score": 0.35658914728682173,
+          "support": 136
+        }
+      },
+      "confusion_matrix": [
+        [
+          52,
+          45,
+          40
+        ],
+        [
+          42,
+          49,
+          36
+        ],
+        [
+          37,
+          53,
+          46
+        ]
+      ]
+    },
+    "Logistic Regression": {
+      "accuracy": 0.45,
+      "weighted_precision": 0.4413851358293605,
+      "weighted_recall": 0.45,
+      "weighted_f1": 0.43036428533890736,
+      "macro_precision": 0.43930146857362046,
+      "macro_recall": 0.44502008229005724,
+      "macro_f1": 0.426800207725513,
+      "per_class": {
+        "Easy (0)": {
+          "precision": 0.5089285714285714,
+          "recall": 0.41605839416058393,
+          "f1_score": 0.4578313253012048,
+          "support": 137
+        },
+        "Medium (1)": {
+          "precision": 0.35443037974683544,
+          "recall": 0.2204724409448819,
+          "f1_score": 0.27184466019417475,
+          "support": 127
+        },
+        "Hard (2)": {
+          "precision": 0.45454545454545453,
+          "recall": 0.6985294117647058,
+          "f1_score": 0.5507246376811594,
+          "support": 136
+        }
+      },
+      "confusion_matrix": [
+        [
+          57,
+          27,
+          53
+        ],
+        [
+          38,
+          28,
+          61
+        ],
+        [
+          17,
+          24,
+          95
+        ]
+      ]
+    }
+  },
+  "model_interpretability": {
+    "decision_tree": {
+      "wall_density": 0.08292179091783076,
+      "dead_end_ratio": 0.2026425465597747,
+      "branching_ratio": 0.13336279600684908,
+      "straight_corridor_ratio": 0.3173093693786536,
+      "turn_corridor_ratio": 0.2637634971368918
+    },
+    "logistic_regression": {
+      "Easy (0)": {
+        "wall_density": 0.32182125646159154,
+        "dead_end_ratio": 0.6274921985951545,
+        "branching_ratio": -0.12254486394327462,
+        "straight_corridor_ratio": 0.5258369691851683,
+        "turn_corridor_ratio": 0.5243815468439303
+      },
+      "Medium (1)": {
+        "wall_density": 0.017337589014636525,
+        "dead_end_ratio": -0.03825104713524786,
+        "branching_ratio": -0.05483334448129862,
+        "straight_corridor_ratio": -0.21444827305973405,
+        "turn_corridor_ratio": -0.21709348050229205
+      },
+      "Hard (2)": {
+        "wall_density": -0.33915884547622804,
+        "dead_end_ratio": -0.5892411514598872,
+        "branching_ratio": 0.17737820842458069,
+        "straight_corridor_ratio": -0.3113886961254344,
+        "turn_corridor_ratio": -0.30728806634163597
+      }
+    },
+    "knn": "KNN is an instance-based non-parametric model with no conventional feature importance coefficients."
+  },
+  "error_analysis": {
+    "Decision Tree": {
+      "total_test_samples": 400,
+      "total_errors": 254,
+      "error_rate": 0.635,
+      "empirical_breakdown": {
+        "Actual 0 -> Predicted 1": {
+          "count": 41,
+          "mean_wall_density": 0.5590999999999999,
+          "mean_dead_end_ratio": 0.05751219512195121,
+          "mean_straight_corridor_ratio": 0.6576658536585366,
+          "mean_turn_corridor_ratio": 0.2230878048780488,
+          "mean_path_detour_factor": 1.4992658536585366,
+          "mean_search_expansion_ratio": 0.4113780487804878,
+          "mean_complexity_index": 0.9553243902439025
+        },
+        "Actual 0 -> Predicted 2": {
+          "count": 34,
+          "mean_wall_density": 0.5516470588235294,
+          "mean_dead_end_ratio": 0.049835294117647054,
+          "mean_straight_corridor_ratio": 0.6672794117647058,
+          "mean_turn_corridor_ratio": 0.22922647058823528,
+          "mean_path_detour_factor": 1.643355882352941,
+          "mean_search_expansion_ratio": 0.4028794117647059,
+          "mean_complexity_index": 1.0231176470588235
+        },
+        "Actual 1 -> Predicted 0": {
+          "count": 45,
+          "mean_wall_density": 0.5565755555555556,
+          "mean_dead_end_ratio": 0.056266666666666666,
+          "mean_straight_corridor_ratio": 0.6625444444444444,
+          "mean_turn_corridor_ratio": 0.22313999999999995,
+          "mean_path_detour_factor": 2.3197533333333333,
+          "mean_search_expansion_ratio": 0.6367511111111112,
+          "mean_complexity_index": 1.478251111111111
+        },
+        "Actual 1 -> Predicted 2": {
+          "count": 31,
+          "mean_wall_density": 0.5514064516129034,
+          "mean_dead_end_ratio": 0.04771935483870968,
+          "mean_straight_corridor_ratio": 0.6639,
+          "mean_turn_corridor_ratio": 0.23519354838709675,
+          "mean_path_detour_factor": 2.3879161290322584,
+          "mean_search_expansion_ratio": 0.5983290322580644,
+          "mean_complexity_index": 1.4931258064516126
+        },
+        "Actual 2 -> Predicted 0": {
+          "count": 51,
+          "mean_wall_density": 0.5533,
+          "mean_dead_end_ratio": 0.05159803921568628,
+          "mean_straight_corridor_ratio": 0.6594647058823531,
+          "mean_turn_corridor_ratio": 0.23463725490196075,
+          "mean_path_detour_factor": 3.1940941176470594,
+          "mean_search_expansion_ratio": 0.8458705882352942,
+          "mean_complexity_index": 2.019978431372549
+        },
+        "Actual 2 -> Predicted 1": {
+          "count": 52,
+          "mean_wall_density": 0.5501288461538463,
+          "mean_dead_end_ratio": 0.05109807692307691,
+          "mean_straight_corridor_ratio": 0.6514884615384614,
+          "mean_turn_corridor_ratio": 0.24118653846153842,
+          "mean_path_detour_factor": 3.4970846153846153,
+          "mean_search_expansion_ratio": 0.8695346153846155,
+          "mean_complexity_index": 2.183303846153846
+        }
+      }
+    },
+    "K-Nearest Neighbors": {
+      "total_test_samples": 400,
+      "total_errors": 253,
+      "error_rate": 0.6325,
+      "empirical_breakdown": {
+        "Actual 0 -> Predicted 1": {
+          "count": 45,
+          "mean_wall_density": 0.5591644444444444,
+          "mean_dead_end_ratio": 0.058084444444444445,
+          "mean_straight_corridor_ratio": 0.6490377777777778,
+          "mean_turn_corridor_ratio": 0.23033555555555552,
+          "mean_path_detour_factor": 1.5732955555555552,
+          "mean_search_expansion_ratio": 0.43293111111111104,
+          "mean_complexity_index": 1.003122222222222
+        },
+        "Actual 0 -> Predicted 2": {
+          "count": 40,
+          "mean_wall_density": 0.5505224999999999,
+          "mean_dead_end_ratio": 0.050192499999999994,
+          "mean_straight_corridor_ratio": 0.6669425,
+          "mean_turn_corridor_ratio": 0.229405,
+          "mean_path_detour_factor": 1.6155425,
+          "mean_search_expansion_ratio": 0.38519,
+          "mean_complexity_index": 1.000365
+        },
+        "Actual 1 -> Predicted 0": {
+          "count": 42,
+          "mean_wall_density": 0.5579904761904763,
+          "mean_dead_end_ratio": 0.05759761904761904,
+          "mean_straight_corridor_ratio": 0.6599619047619047,
+          "mean_turn_corridor_ratio": 0.2228047619047619,
+          "mean_path_detour_factor": 2.260340476190476,
+          "mean_search_expansion_ratio": 0.6507095238095238,
+          "mean_complexity_index": 1.4555214285714284
+        },
+        "Actual 1 -> Predicted 2": {
+          "count": 36,
+          "mean_wall_density": 0.5509361111111112,
+          "mean_dead_end_ratio": 0.047850000000000004,
+          "mean_straight_corridor_ratio": 0.6663861111111111,
+          "mean_turn_corridor_ratio": 0.2323444444444445,
+          "mean_path_detour_factor": 2.386225,
+          "mean_search_expansion_ratio": 0.5844194444444444,
+          "mean_complexity_index": 1.4853222222222224
+        },
+        "Actual 2 -> Predicted 0": {
+          "count": 37,
+          "mean_wall_density": 0.5555405405405406,
+          "mean_dead_end_ratio": 0.05375405405405405,
+          "mean_straight_corridor_ratio": 0.6549864864864865,
+          "mean_turn_corridor_ratio": 0.23508918918918914,
+          "mean_path_detour_factor": 3.1214810810810807,
+          "mean_search_expansion_ratio": 0.8649297297297296,
+          "mean_complexity_index": 1.9932054054054054
+        },
+        "Actual 2 -> Predicted 1": {
+          "count": 53,
+          "mean_wall_density": 0.5516169811320756,
+          "mean_dead_end_ratio": 0.052164150943396215,
+          "mean_straight_corridor_ratio": 0.6545471698113207,
+          "mean_turn_corridor_ratio": 0.235588679245283,
+          "mean_path_detour_factor": 3.4060377358490563,
+          "mean_search_expansion_ratio": 0.8756867924528302,
+          "mean_complexity_index": 2.1408584905660377
+        }
+      }
+    },
+    "Logistic Regression": {
+      "total_test_samples": 400,
+      "total_errors": 220,
+      "error_rate": 0.55,
+      "empirical_breakdown": {
+        "Actual 0 -> Predicted 1": {
+          "count": 27,
+          "mean_wall_density": 0.5589259259259258,
+          "mean_dead_end_ratio": 0.05708518518518518,
+          "mean_straight_corridor_ratio": 0.6442777777777778,
+          "mean_turn_corridor_ratio": 0.23071851851851852,
+          "mean_path_detour_factor": 1.6200888888888887,
+          "mean_search_expansion_ratio": 0.44795925925925917,
+          "mean_complexity_index": 1.0340222222222222
+        },
+        "Actual 0 -> Predicted 2": {
+          "count": 53,
+          "mean_wall_density": 0.5469150943396227,
+          "mean_dead_end_ratio": 0.04951698113207547,
+          "mean_straight_corridor_ratio": 0.6658188679245284,
+          "mean_turn_corridor_ratio": 0.23315849056603774,
+          "mean_path_detour_factor": 1.6280811320754716,
+          "mean_search_expansion_ratio": 0.36796792452830185,
+          "mean_complexity_index": 0.9980283018867924
+        },
+        "Actual 1 -> Predicted 0": {
+          "count": 38,
+          "mean_wall_density": 0.5662552631578947,
+          "mean_dead_end_ratio": 0.05717105263157894,
+          "mean_straight_corridor_ratio": 0.668021052631579,
+          "mean_turn_corridor_ratio": 0.21858421052631574,
+          "mean_path_detour_factor": 2.2017526315789473,
+          "mean_search_expansion_ratio": 0.6991052631578948,
+          "mean_complexity_index": 1.4504263157894737
+        },
+        "Actual 1 -> Predicted 2": {
+          "count": 61,
+          "mean_wall_density": 0.5473639344262294,
+          "mean_dead_end_ratio": 0.049529508196721306,
+          "mean_straight_corridor_ratio": 0.6629459016393441,
+          "mean_turn_corridor_ratio": 0.23404918032786887,
+          "mean_path_detour_factor": 2.4133147540983604,
+          "mean_search_expansion_ratio": 0.562665573770492,
+          "mean_complexity_index": 1.4879918032786885
+        },
+        "Actual 2 -> Predicted 0": {
+          "count": 17,
+          "mean_wall_density": 0.5641705882352941,
+          "mean_dead_end_ratio": 0.05421176470588235,
+          "mean_straight_corridor_ratio": 0.650770588235294,
+          "mean_turn_corridor_ratio": 0.24198823529411762,
+          "mean_path_detour_factor": 3.006535294117647,
+          "mean_search_expansion_ratio": 0.9146764705882353,
+          "mean_complexity_index": 1.9606058823529409
+        },
+        "Actual 2 -> Predicted 1": {
+          "count": 24,
+          "mean_wall_density": 0.5613625,
+          "mean_dead_end_ratio": 0.056304166666666676,
+          "mean_straight_corridor_ratio": 0.6460499999999999,
+          "mean_turn_corridor_ratio": 0.22844583333333332,
+          "mean_path_detour_factor": 3.0532375,
+          "mean_search_expansion_ratio": 0.8970874999999999,
+          "mean_complexity_index": 1.9751625
+        }
+      }
+    }
+  },
+  "wall_density_observation": {
+    "unique_values": [
+      0.5408,
+      0.5488,
+      0.5689
+    ],
+    "unique_count": 3,
+    "size_mapping": {
+      "0.5408": {
+        "count": 400,
+        "grid_dimensions": "25x25",
+        "wall_count": 338,
+        "total_cells": 625
+      },
+      "0.5488": {
+        "count": 800,
+        "grid_dimensions": "21x21",
+        "wall_count": 242,
+        "total_cells": 441
+      },
+      "0.5689": {
+        "count": 800,
+        "grid_dimensions": "15x15",
+        "wall_count": 128,
+        "total_cells": 225
+      }
+    },
+    "finding": "wall_density is strongly associated with maze dimension in this dataset because the recursive-backtracking generator produces a fixed open-cell count for each maze dimension (15x15 = 0.5689, 21x21 = 0.5488, 25x25 = 0.5408). Observed misclassifications in models like Logistic Regression correlate strongly with maze dimension steps encoded by wall_density."
+  },
+  "random_seeds": {
+    "dataset_split_seed": 42,
+    "cross_validation_seed": 42,
+    "model_random_state": 42
+  }
+}
