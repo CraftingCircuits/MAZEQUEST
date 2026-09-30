@@ -2,215 +2,484 @@
 
 > **Find the path. Outsmart the maze.**
 
-MazeQuest is an academic web-based maze adventure game built to demonstrate state-space AI search algorithms and machine learning difficulty prediction.
+MazeQuest is an interactive web-based maze adventure game that combines **Artificial Intelligence search algorithms** with a **Machine Learning difficulty-prediction pipeline**.
 
----
+The project demonstrates how a maze can be represented as a state-space problem, solved using multiple search strategies, visualized interactively, and analyzed using machine learning.
 
-## Current Status: Feature-Complete Engine & Pre-Inference Integration
+## Live Demo
 
-The project has completed its core development phases:
-1. **Interactive UI & Difficulty System**: Pre-gameplay 3-stepped difficulty slider (EASY, MEDIUM, HARD) with dynamic 200–300 ms theme transitions, emoji state indicators, and persistent difficulty across level progression.
-2. **Topology-Aware Maze Generation**: Procedural generation using Recursive Backtracking combined with controlled dead-end braiding (10% to 40% braid ratios) to introduce distractor loops and non-obvious routes.
-3. **Four AI Search Solvers**: Deterministic solvers for Breadth-First Search (BFS), Depth-First Search (DFS), Greedy Best-First Search, and A* Search.
-4. **AI Visualization & Comparison**: Asynchronous step-by-step search exploration animation and factual multi-solver comparison benchmarks with path validation checks.
-5. **Machine Learning Pipeline**: Complete dataset generation (2,000 synthetic mazes), feature engineering (5 spatial features), and ML model training/evaluation (Decision Tree, KNN, Logistic Regression) with serialized model artifacts and confusion matrix visual reports.
+**[Play MazeQuest](https://craftingcircuits.github.io/MAZEQUEST/)**
+
+## Project Highlights
+
+* Interactive maze gameplay with keyboard controls
+* Procedurally generated mazes
+* Three selectable difficulty modes: Easy, Medium, Hard
+* Four AI search algorithms:
+
+  * Breadth-First Search (BFS)
+  * Depth-First Search (DFS)
+  * Greedy Best-First Search
+  * A* Search
+* Step-by-step AI search visualization
+* Factual comparison of all four search algorithms
+* Machine Learning-based maze difficulty prediction
+* Decision Tree, KNN, and Logistic Regression models
+* Automated tests for major AI and ML components
+* Responsive web interface
+* Static deployment using GitHub Pages
 
 ---
 
 ## Main Features
 
-- **Procedural Maze Engine**: Seeded random generation supporting 100% reproducible grids and controlled dead-end wall removal.
-- **Stepped Difficulty Selection**: Select between Easy ($15\times15$), Medium ($21\times21$), and Hard ($25\times25$) modes before starting a game session.
-- **Responsive HTML5 Canvas Engine**: Crisp 60 FPS grid rendering with custom player avatar, start/goal indicators, and translucent exploration overlays.
-- **AI Search Controls**: Run any solver on demand with adjustable speed presets (Slow, Normal, Fast) or compare all four algorithms synchronously.
-- **Offline ML Training & Evaluation**: Stratified 5-Fold Cross-Validation, feature scaling pipelines, confusion matrix export, and model serialization using Python `scikit-learn`.
+### Interactive Maze Gameplay
+
+The player navigates a procedurally generated maze using keyboard controls.
+
+The game tracks:
+
+* Current level
+* Player position
+* Number of moves
+* Timer
+* Start and goal positions
+* Selected difficulty
+
+The player can progress through multiple levels while keeping the selected difficulty mode active.
+
+### Procedural Maze Generation
+
+Maze generation uses a **Recursive Backtracking** approach with seeded randomization.
+
+The generator also supports controlled dead-end braiding to introduce additional routes and distractor paths, making the maze less visually obvious and more suitable for AI search experiments.
+
+The maze generator is separated from the rendering and gameplay systems so that the maze data remains the source of truth.
+
+### Difficulty System
+
+MazeQuest provides three selectable difficulty modes:
+
+| Difficulty | Grid Size | Braid Ratio | Purpose                                               |
+| ---------- | --------: | ----------: | ----------------------------------------------------- |
+| Easy       |   15 × 15 |         10% | Smaller maze with fewer distractor routes             |
+| Medium     |   21 × 21 |         25% | Moderate maze complexity                              |
+| Hard       |   25 × 25 |         40% | Larger maze with more branching and distractor routes |
+
+Difficulty is selected before gameplay and remains active while progressing through levels.
+
+The selected difficulty controls maze-generation conditions. It is separate from the Machine Learning model's predicted difficulty.
 
 ---
 
-## Tech Stack & Architecture
+# Artificial Intelligence
 
-- **Frontend Core**: HTML5, Vanilla CSS3 (Custom Properties & Glassmorphism System), Vanilla JavaScript (ES6+ Modules).
-- **AI Search Solvers**:
-  - `BFSSolver.js`: Level-by-level queue traversal guaranteeing optimal shortest paths in unweighted graphs.
-  - `DFSSolver.js`: Deep LIFO stack traversal returning valid maze paths.
-  - `BestFirstSolver.js`: Heuristic search ($f(n) = h(n)$) using Manhattan Distance.
-  - `AStarSolver.js`: Optimal heuristic search ($f(n) = g(n) + h(n)$).
-- **AI Comparison Engine**: `AIComparator.js` providing synchronous multi-solver benchmarking, path continuity validation, A* vs BFS optimality verification, and comparative bar chart rendering.
-- **AI Visualization Engine**: `AIVisualizer.js` providing step-by-step exploration playback, final path highlights, speed controls, and animation cancellation guards.
-- **Procedural & Feature Engine**:
-  - `MazeGenerator.js`: Recursive Backtracking with Mulberry32 PRNG seed support and controlled dead-end braiding.
-  - `mazeFeatureExtractor.js`: Extracts 5 spatial features ($X$) and 6 target-generation benchmark metrics ($M_{target}$).
-  - `datasetGenerator.js`: Synthesizes 2,000 mazes using train-only percentile cuts ($P_{33.3}^{train}$ and $P_{66.7}^{train}$).
-- **Offline ML Pipeline**: Python 3.13 (`pandas`, `scikit-learn`, `matplotlib`, `joblib`) implementing 5-Fold Stratified CV, preprocessing pipelines, confusion matrix rendering, and `.joblib` serialization.
+MazeQuest treats the maze as a **state-space search problem**.
+
+Each traversable maze cell represents a state, and movement between neighboring cells represents an action.
+
+The project implements four search algorithms.
+
+### Breadth-First Search — BFS
+
+BFS explores the maze level by level using a queue.
+
+For an unweighted maze, BFS guarantees a shortest path when a path exists.
+
+### Depth-First Search — DFS
+
+DFS explores one branch deeply before backtracking.
+
+It can find a valid path but does not guarantee a shortest path.
+
+### Greedy Best-First Search
+
+Greedy Best-First Search selects states using a heuristic:
+
+`f(n) = h(n)`
+
+MazeQuest uses Manhattan distance as the heuristic:
+
+`h(n) = |row - goalRow| + |column - goalColumn|`
+
+The algorithm prioritizes states that appear closer to the goal but does not guarantee a shortest path.
+
+### A* Search
+
+A* combines the cost already travelled with the heuristic estimate:
+
+`f(n) = g(n) + h(n)`
+
+where:
+
+* `g(n)` = cost from the start state to the current state
+* `h(n)` = estimated cost from the current state to the goal
+
+With the Manhattan-distance heuristic used for the maze, A* can find an optimal shortest path in the unweighted grid setting used by MazeQuest.
 
 ---
 
-## Difficulty System
+## AI Visualization
 
-MazeQuest provides three stepped difficulty levels aligned with the ML target classification schema:
+The AI search system separates:
 
-| Mode | Grid Size | Braid Ratio | Visual Theme | Emoji | Description |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **EASY** (0) | $15 \times 15$ | 10% (0.10) | Emerald Green (`#10b981`) | 😊 | Relaxed maze size with open paths and light distractor routes. |
-| **MEDIUM** (1) | $21 \times 21$ | 25% (0.25) | Amber Orange (`#f59e0b`) | 🤔 | Balanced maze size with moderate branching and misleading turns. |
-| **HARD** (2) | $25 \times 25$ | 40% (0.40) | Crimson Red (`#ef4444`) | 😤 | Dense maze size with high branching and complex distractor loops. |
+**Search computation → Search result → Visualization**
 
-Difficulty is selected before starting a session and remains active across level progression (`Level 1 -> Level 2 -> Level 3`).
+The solvers perform the search independently of the user interface.
+
+The visualization layer then displays:
+
+* Nodes explored
+* Search progression
+* Final path
+* Path length
+* Execution time
+* Algorithm used
+
+The interface provides adjustable visualization speeds:
+
+* Slow
+* Normal
+* Fast
+
+Search execution time is measured separately from the visualization animation.
 
 ---
 
-## Machine Learning Results Summary
+## AI Algorithm Comparison
 
-Models were trained on 1,600 training records using 5-Fold Stratified Cross-Validation and evaluated on 400 untouched test records:
+MazeQuest can execute all four algorithms on the same maze and present their results together.
 
-| Model Algorithm | Hyperparameters / Pipeline | Test Accuracy | Precision (Macro) | Recall (Macro) | F1-Score (Macro) |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Logistic Regression** | `StandardScaler`, $C=1.0, \text{lbfgs}$ | **98.75%** | 0.9877 | 0.9876 | **0.9876** |
-| **Decision Tree** | `max_depth=5, min_samples_split=5` | **97.25%** | 0.9734 | 0.9731 | **0.9731** |
-| **K-Nearest Neighbors** | `StandardScaler`, $K=7, \text{distance}$ weights | **96.50%** | 0.9658 | 0.9654 | **0.9654** |
+The comparison includes factual measurements such as:
+
+* Success/failure
+* Path length
+* Nodes explored
+* Execution time
+* Path validity
+
+The comparison system does not assign subjective rankings to the algorithms. It allows their measured behavior to be observed under the same maze conditions.
 
 ---
 
-## Project Structure
+# Machine Learning
+
+MazeQuest also contains a supervised Machine Learning pipeline for predicting maze difficulty.
+
+## ML Problem
+
+The ML task is formulated as a **three-class classification problem**:
+
+| Class | Difficulty |
+| ----: | ---------- |
+|     0 | Easy       |
+|     1 | Medium     |
+|     2 | Hard       |
+
+The model uses five spatial/topological maze features:
+
+* `wall_density`
+* `dead_end_ratio`
+* `branching_ratio`
+* `straight_corridor_ratio`
+* `turn_corridor_ratio`
+
+Target-generation metrics are kept separate from the model input features to avoid direct target leakage.
+
+## Dataset
+
+The project generated a synthetic dataset containing:
+
+**2,000 mazes**
+
+with multiple maze dimensions and reproducible seeded generation.
+
+The dataset contains:
+
+* Maze metadata
+* Topological counts
+* Five ML input features
+* Search-based target-generation metrics
+* Difficulty labels
+
+The dataset was split into:
+
+* **1,600 training records**
+* **400 test records**
+
+Training-derived thresholds were used for difficulty labeling without using the test set to determine those thresholds.
+
+---
+
+## ML Models
+
+Three classification algorithms were evaluated:
+
+### Decision Tree
+
+A tree-based classifier that learns feature-based decision boundaries.
+
+### K-Nearest Neighbors
+
+A distance-based classifier.
+
+K was investigated using cross-validation, with the selected configuration using:
+
+`K = 7`
+
+### Logistic Regression
+
+A linear classification model using standardized input features.
+
+For KNN and Logistic Regression, preprocessing is implemented using scikit-learn pipelines.
+
+---
+
+## Model Evaluation
+
+The models were evaluated using:
+
+* Accuracy
+* Precision
+* Recall
+* F1-score
+* Macro F1
+* Weighted F1
+* Confusion matrices
+* Stratified 5-fold cross-validation
+
+The finalized test results were:
+
+| Model               | Test Accuracy | Weighted F1 | Macro F1 |
+| ------------------- | ------------: | ----------: | -------: |
+| Decision Tree       |        36.50% |      0.3594 |   0.3596 |
+| KNN (K=7)           |        36.75% |      0.3677 |   0.3674 |
+| Logistic Regression |        45.00% |      0.4304 |   0.4268 |
+
+These results are reported as experimental measurements from the generated dataset and are not intended to represent human-perceived maze difficulty.
+
+---
+
+# ML Integration
+
+The trained ML models are integrated into the MazeQuest architecture for inference.
+
+The inference pipeline uses only the five spatial features:
+
+```text
+Generated Maze
+      ↓
+Feature Extraction
+      ↓
+5 Spatial Features
+      ↓
+ML Model
+      ↓
+Predicted Difficulty
+```
+
+The following search-derived metrics are **not used as inference inputs**:
+
+* Shortest path length
+* Manhattan distance
+* Path detour factor
+* BFS nodes explored
+* Search expansion ratio
+* Complexity index
+
+This keeps the inference feature set separated from the metrics used during target generation.
+
+---
+
+# Technology Stack
+
+### Frontend
+
+* HTML5
+* CSS3
+* Vanilla JavaScript
+* ES6 Modules
+* HTML5 Canvas
+
+### Artificial Intelligence
+
+* BFS
+* DFS
+* Greedy Best-First Search
+* A* Search
+* Manhattan-distance heuristic
+* Priority queue / min-heap
+* Search visualization
+
+### Machine Learning
+
+* Python
+* NumPy
+* Pandas
+* Scikit-learn
+* Matplotlib
+* Joblib
+
+### Development & Deployment
+
+* Git
+* GitHub
+* GitHub Pages
+
+---
+
+# Public Project Structure
+
+The public repository contains the application source code and project files required to run and understand MazeQuest.
 
 ```text
 MazeQuest/
 │
-├── index.html                  # Main Web Application & Game Shell
-├── README.md                   # Project Overview & Quick Start
+├── index.html
+├── README.md
 │
 ├── data/
 │   └── ml/
-│       ├── dataset.csv         # Authoritative 2,000 synthetic maze dataset (CSV)
-│       └── dataset.json        # Authoritative 2,000 synthetic maze dataset (JSON)
+│       ├── dataset.csv
+│       └── dataset.json
 │
 ├── ml/
-│   ├── README.md               # ML Module directory overview
+│   ├── README.md
 │   ├── features/
-│   │   ├── mazeFeatureExtractor.js     # Spatial feature & benchmark metric extractor
-│   │   └── mazeFeatureExtractor.test.js# Automated feature extractor unit test suite
 │   ├── dataset/
-│   │   ├── datasetGenerator.js # 2,000 synthetic maze dataset generator
-│   │   ├── datasetValidator.js # Schema, bounds, and summary stats validator
-│   │   ├── datasetGenerator.test.js# Automated dataset generator test suite
-│   │   └── runDatasetPipeline.js   # Dataset pipeline executable runner
 │   ├── training/
-│   │   ├── preprocessing.py    # Schema validation, feature isolation, and pipeline builders
-│   │   ├── train_models.py     # KNN K investigation, 5-Fold Stratified CV, model fitting
-│   │   ├── evaluate_models.py  # Test evaluation, confusion matrix PNG generator, error analysis
-│   │   ├── pipeline_runner.py  # End-to-end ML training runner script
-│   │   └── test_ml_pipeline.py # Automated unit test suite for ML pipeline
 │   ├── evaluation/
-│   │   ├── results.json        # Machine-readable evaluation metrics & metadata
-│   │   └── confusion_matrices/ # 3x3 Confusion matrix PNG plots
 │   └── models/
-│       ├── decision_tree.joblib# Serialized Decision Tree model
-│       ├── knn_pipeline.joblib # Serialized KNN pipeline with StandardScaler
-│       └── logistic_regression_pipeline.joblib # Serialized Logistic Regression pipeline
 │
 ├── frontend/
 │   ├── css/
-│   │   └── main.css            # Stylesheet, CSS variables, themes, HUD, Canvas, AI Panel, Comparison Modal
+│   │   └── main.css
 │   └── js/
-│       ├── config.js           # Configuration constants
-│       ├── app.js              # Application controller shell & view transitions
-│       ├── main.js             # ES Module entry point
+│       ├── config.js
+│       ├── app.js
+│       ├── main.js
 │       └── engine/
-│           ├── game_state.js   # Game state manager & level progression logic
-│           ├── renderer.js     # HTML5 Canvas renderer with AI visualization overlay
-│           └── input_handler.js# WASD & Arrow keys keyboard controller
+│           ├── game_state.js
+│           ├── renderer.js
+│           └── input_handler.js
 │
 ├── maze/
-│   ├── maze_generator.js       # Procedural generator with seed support & dead-end braiding
-│   ├── feature_extractor.js    # Reusable topological maze feature extractor re-export
-│   └── EXPLANATION.md          # Generation algorithm & collision docs
+│   ├── maze_generator.js
+│   ├── feature_extractor.js
+│   └── EXPLANATION.md
 │
 ├── ai/
 │   ├── common/
-│   │   ├── search_result.js    # Standardized AI search result schema
-│   │   └── priority_queue.js   # Min-heap priority queue data structure
 │   ├── visualization/
-│   │   └── visualizer.js       # Asynchronous AI search visualization controller
 │   ├── comparison/
-│   │   ├── comparator.js       # Synchronous 4-algorithm comparison engine
-│   │   └── comparator_test.js  # Comparison test suite runner
 │   ├── bfs/
-│   │   ├── bfs.js              # Pure Breadth-First Search solver
-│   │   ├── bfs_test.js         # BFS test suite runner
-│   │   └── EXPLANATION.md      # BFS theory & worked example
 │   ├── dfs/
-│   │   ├── dfs.js              # Pure Depth-First Search solver
-│   │   ├── dfs_test.js         # DFS test suite runner
-│   │   └── EXPLANATION.md      # DFS theory & worked example
 │   ├── best_first/
-│   │   ├── best_first.js       # Pure Greedy Best-First Search solver
-│   │   ├── best_first_test.js  # Best-First test suite runner
-│   │   └── EXPLANATION.md      # Best-First theory & worked example
 │   └── astar/
-│       ├── astar.js            # Pure A* Search solver
-│       ├── astar_test.js        # A* test suite runner
-│       └── EXPLANATION.md      # A* theory & worked example
 │
 └── documentation/
-    ├── SYSTEM_ARCHITECTURE.md  # Detailed technical blueprint
-    ├── DIFFICULTY_SYSTEM.md    # Difficulty selection architecture & dead-end braiding docs
-    ├── AI_SEARCH_ARCHITECTURE.md# Formal state-space formulation & solver comparison
-    ├── AI_VISUALIZATION.md     # AI Search Visualization architecture & data flow
-    ├── AI_COMPARISON.md        # AI Algorithm Comparison architecture & data flow
-    ├── ML_PROBLEM_DEFINITION.md# Machine Learning problem formulation & feature spec
-    ├── ML_FEATURE_EXTRACTION.md# Feature extraction, target derivation & validation docs
-    ├── ML_MODEL_TRAINING.md    # ML model training, cross-validation & evaluation docs
-    ├── LEVEL_SYSTEM.md         # Level progression architecture & data flow
-    ├── CHANGELOG.md            # Version history
-    └── VIVA_NOTES.md           # Academic Q&A and viva preparation notes
+    ├── SYSTEM_ARCHITECTURE.md
+    ├── DIFFICULTY_SYSTEM.md
+    ├── LEVEL_SYSTEM.md
+    └── CHANGELOG.md
 ```
+
+The detailed academic reports, viva preparation, extensive AI/ML reference material, workflow map, and Antigravity development history are maintained separately from the public project repository.
 
 ---
 
-## How to Run
+# How to Run Locally
 
-1. Open a local HTTP web server in the project root directory:
-   - Using Python: `python -m http.server 8000`
-   - Using VS Code Live Server extension.
-2. Open a web browser and navigate to `http://localhost:8000`.
-3. Click **Start Game**, select a difficulty (Easy, Medium, Hard), and click **Play Game**.
-4. In the gameplay AI Control Panel:
-   - Click **Run AI** to animate the selected solver.
-   - Click **Compare** to run all 4 solvers synchronously and view comparative charts.
+MazeQuest is a client-side web application and should be served through a local HTTP server.
 
-To re-run the ML Training Pipeline via Python CLI:
+### Using Python
+
+```bash
+python -m http.server 8000
+```
+
+Then open:
+
+```text
+http://localhost:8000
+```
+
+### Using VS Code
+
+The project can also be launched using the VS Code Live Server extension.
+
+---
+
+# Running the ML Pipeline
+
+The ML training pipeline can be executed using Python from the project root.
+
 ```bash
 python -m ml.training.pipeline_runner
 ```
 
-To run the ML Pipeline Unit Tests:
+ML pipeline tests can be run using:
+
 ```bash
 python -m unittest ml/training/test_ml_pipeline.py
 ```
 
 ---
 
-## Documentation References
+# Project Purpose
 
-- [System Architecture](documentation/SYSTEM_ARCHITECTURE.md)
-- [Difficulty System & Topology](documentation/DIFFICULTY_SYSTEM.md)
-- [AI Search Architecture](documentation/AI_SEARCH_ARCHITECTURE.md)
-- [AI Search Visualization](documentation/AI_VISUALIZATION.md)
-- [AI Algorithm Comparison](documentation/AI_COMPARISON.md)
-- [ML Problem Definition](documentation/ML_PROBLEM_DEFINITION.md)
-- [ML Feature Extraction](documentation/ML_FEATURE_EXTRACTION.md)
-- [ML Model Training](documentation/ML_MODEL_TRAINING.md)
-- [Level Progression System](documentation/LEVEL_SYSTEM.md)
-- [Viva Preparation Notes](documentation/VIVA_NOTES.md)
-- [Changelog](documentation/CHANGELOG.md)
+MazeQuest was developed as an academic project to demonstrate the practical integration of:
+
+**Game Development + Artificial Intelligence + Machine Learning**
+
+The project connects theoretical concepts with an interactive application:
+
+```text
+Maze Representation
+       ↓
+State-Space Search
+       ↓
+AI Algorithms
+       ↓
+Visualization & Comparison
+       ↓
+Maze Feature Extraction
+       ↓
+Dataset Generation
+       ↓
+Machine Learning
+       ↓
+Difficulty Prediction
+       ↓
+Interactive Application
+```
 
 ---
 
-## Future Scope
+# Future Scope
 
-- **Phase 8D ML Inference Integration**: Transpile decision rules or export model weights for real-time in-browser difficulty prediction on the HUD.
-- **Adaptive Difficulty**: Dynamically select upcoming maze grid sizes and braiding ratios based on player movement performance metrics.
-- **Expanded Grid Topologies**: Support non-square lattices, hexagonal grids, or custom user-drawn maze obstacles.
+Possible future improvements include:
 
+* More advanced adaptive difficulty
+* Additional maze-generation algorithms
+* Additional AI search strategies
+* Larger and more diverse ML datasets
+* Player-performance-based difficulty adaptation
+* Additional maze topologies
+* Improved model generalization with richer training data
+* More advanced browser-side ML inference
 
+---
 
+## Author
+
+**Niyati Panchal**
+
+Electronics & Communication Engineering
+Lalbhai Dalpatbhai College of Engineering (LDCE)
+
+---
+
+## License
+
+This project is developed for academic and educational purposes.
